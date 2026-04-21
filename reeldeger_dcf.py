@@ -7,6 +7,41 @@ Damodaran Slayt referansları kod içinde belirtilmiştir.
 
 import pandas as pd
 import numpy as np
+# ─────────────────────────────────────────────────────────────────────────────
+# EXCEL YÜKLEME — openpyxl Fill stil hatası düzeltmesi
+# Fastweb'in eski Excel dosyalarında stil formatı bozuk olabiliyor.
+# Hata: "expected <class 'openpyxl.styles.fills.Fill'>"
+# Çözüm: openpyxl descriptor sequence modülündeki _convert referansını patch et
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _openpyxl_patch():
+    """Bozuk xlsx stil dosyalarını sessizce atlayan openpyxl yaması."""
+    try:
+        import openpyxl.descriptors.base as _base
+        import openpyxl.descriptors.sequence as _seq
+
+        _orig = _base._convert
+
+        def _safe(expected_type, value):
+            try:
+                return _orig(expected_type, value)
+            except TypeError:
+                try:
+                    return expected_type()
+                except Exception:
+                    return value
+
+        _base._convert = _safe
+        _seq._convert = _safe
+    except Exception:
+        pass  # Patch başarısız olursa sessizce devam et
+
+_openpyxl_patch()
+
+
+def _excel_yukle(dosya) -> pd.DataFrame:
+    """Excel dosyası yükle. Stil hatası varsa patch zaten aktif."""
+    return pd.read_excel(dosya)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -70,7 +105,7 @@ def fintables_yukle(dosya) -> dict:
     Arge değerleri USD, pozitif (gider olarak geliyorsa abs alınır).
     """
     try:
-        df = pd.read_excel(dosya)
+        df = _excel_yukle(dosya)
     except Exception:
         return {}
 
