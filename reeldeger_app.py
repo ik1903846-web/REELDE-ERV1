@@ -14,6 +14,9 @@ import plotly.express as px
 from datetime import datetime
 import warnings
 warnings.filterwarnings("ignore")
+def _excel_yukle(dosya) -> pd.DataFrame:
+    """Excel yükle. Stil hatası reeldeger_dcf'deki patch ile giderildi."""
+    return pd.read_excel(dosya)
 
 from reeldeger_dcf import (
     dcf_hesapla, finansal_mi, portfoy_hesapla,
@@ -174,7 +177,7 @@ def main():
     donemler = {}
     for f in sorted(fastweb_dosyalar, key=lambda x: x.name):
         try:
-            donemler[f.name] = pd.read_excel(f)
+            donemler[f.name] = _excel_yukle(f)
         except Exception as e:
             st.error(f"{f.name}: {e}")
 
