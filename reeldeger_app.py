@@ -492,11 +492,19 @@ def main():
 
             gdf2 = port[["kod","iskonto","icsel","Ağırlık (%)","Tutar (USD)"]].copy()
             gdf2.columns = ["Kod","İskonto(%)","İçsel($)","Ağırlık(%)","Tutar(USD)"]
-            gdf2["İskonto(%)"] = gdf2["İskonto(%)"].apply(lambda x: f"%{x:.1f}")
-            gdf2["İçsel($)"]   = gdf2["İçsel($)"].apply(lambda x: fmt_usd(x, 3))
-            gdf2["Ağırlık(%)"] = gdf2["Ağırlık(%)"].apply(lambda x: f"%{x:.1f}")
-            gdf2["Tutar(USD)"] = gdf2["Tutar(USD)"].apply(lambda x: f"${x:,.0f}")
-            st.dataframe(gdf2, use_container_width=True, hide_index=True)
+            # Float olarak sakla — Streamlit numeric sort yapabilsin
+            # String'e çevirme: lexicographic sıralama bozuyor ($11 < $7 gibi)
+            st.dataframe(
+                gdf2,
+                use_container_width=True,
+                hide_index=True,
+                column_config={
+                    "İskonto(%)": st.column_config.NumberColumn(format="%.1f%%"),
+                    "İçsel($)":   st.column_config.NumberColumn(format="$%.4f"),
+                    "Ağırlık(%)": st.column_config.NumberColumn(format="%.1f%%"),
+                    "Tutar(USD)": st.column_config.NumberColumn(format="$%,.0f"),
+                }
+            )
 
             fig = px.pie(port, names="kod", values="Ağırlık (%)", title="Portföy Dağılımı")
             fig.update_layout(paper_bgcolor="#07070f", font_color="#e4e4e7", height=320)
@@ -546,12 +554,21 @@ def main():
 
         st.markdown("---")
         st.markdown("**Sektör Lambda Ortalamaları (Hesaplanan)**")
-        sektor_tablo = {k: f"%{v*100:.1f}"
-                        for k, v in sektor_ort.items() if k != "__BIST__"}
-        sektor_tablo["── BIST Genel Ortalama"] = f"%{bist_ort*100:.1f}"
+        # Sektör lambda tablosu — büyükten küçüğe sırala
+        sektor_df = pd.DataFrame([
+            {"Sektör": k, "Ort. Yurtiçi Oranı (%)": round(v * 100, 1)}
+            for k, v in sektor_ort.items() if k != "__BIST__"
+        ]).sort_values("Ort. Yurtiçi Oranı (%)", ascending=False)
+        # BIST ortalamasını en alta ekle
+        bist_satir = pd.DataFrame([{"Sektör": "── BIST Genel Ortalama", "Ort. Yurtiçi Oranı (%)": round(bist_ort * 100, 1)}])
+        sektor_df = pd.concat([sektor_df, bist_satir], ignore_index=True)
         st.dataframe(
-            pd.DataFrame(list(sektor_tablo.items()), columns=["Sektör", "Ort. Yurtiçi Oranı"]),
-            use_container_width=True, hide_index=True
+            sektor_df,
+            use_container_width=True,
+            hide_index=True,
+            column_config={
+                "Ort. Yurtiçi Oranı (%)": st.column_config.NumberColumn(format="%.1f%%")
+            }
         )
 
         st.markdown("---")
