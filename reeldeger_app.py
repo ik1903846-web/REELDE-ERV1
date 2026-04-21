@@ -559,7 +559,11 @@ def main():
 **Sınırlamalar**
 - **Kira yükümlülüğü:** TFRS 16 kapsamında zaten Finansal Borçlar içinde — ayrıca girilmez
 - **Türkiye piyasa ort. yurtiçi oranı (%54.6):** Yüklenen Excel'deki BIST şirketlerinden hesaplandı
-- **Trailing 12-month (Slayt 69):** Yıllık dönem Excel'leri yüklendi. TTM = son 4 çeyreği toplayıp tek rakam elde etmek anlamına gelir — bu sistem çeyrek dönem export gerektirdiğinden yapılamıyor. Yıllık veri kullanılıyor.
+- **Dönem kullanım mantığı:**
+  - **DCF hesaplama & Portföy:** En son yüklenen dönemin verisi (örn. 202512)
+  - **Sinyal Takip:** Son 2 dönem karşılaştırılır (örn. 202509 → 202512)
+  - **Sektör Lambda ortalamaları:** Tüm yüklenen dönemler birleştirilerek hesaplanır (daha geniş veri tabanı)
+  - **TTM (Trailing 12-month):** Son 4 çeyreğin kazancı toplanarak en güncel 12 aylık FVÖK elde edilir — şu an her dönemin kendi yıllık verisi kullanılıyor, TTM desteği eklenecek
 - **Beta:** Regression beta (bottom-up değil) — Slayt 47
 - **Satın alma normalizasyonu:** Tek dönem CapEx — Slayt 86
 
