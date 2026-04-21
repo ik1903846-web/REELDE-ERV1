@@ -289,9 +289,11 @@ def main():
                 )
 
             if sonuc["nwc_kaynak"] == "ticari_borc":
-                st.success(f"✅ NWC: Ticari Borçlar kullanıldı ({fmt_usd(sonuc['ticari_borc'])})")
+                st.success(f"✅ NWC: Ticari Borçlar ({fmt_usd(sonuc['ticari_borc'])}) — Slayt 89")
+            elif ft_data:
+                st.info("ℹ NWC: Bu şirket için Ticari Borç = 0 — KV Borç kullanılıyor")
             else:
-                st.warning("⚠ NWC: Ticari Borç yok — KV Borç kullanılıyor (Fintables yükleyin)")
+                st.warning("⚠ NWC: Fintables yüklenmedi — KV Borç kullanılıyor")
 
         # Metrikler
         m = st.columns(6)
