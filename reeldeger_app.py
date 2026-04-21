@@ -557,9 +557,11 @@ def main():
         st.markdown("---")
         st.markdown("""
 **Sınırlamalar**
-- Kira yükümlülüğü: Dipnottan manuel girilir (Fastweb/Fintables'ta yok)
-- Türkiye piyasa ort. yurtiçi oranı (%54.6): 472 BIST şirketinden hesaplandı
-- Tek dönem veri: Trailing 12-month tam yapılamıyor (Slayt 69)
+- **Kira yükümlülüğü:** TFRS 16 kapsamında zaten Finansal Borçlar içinde — ayrıca girilmez
+- **Türkiye piyasa ort. yurtiçi oranı (%54.6):** Yüklenen Excel'deki BIST şirketlerinden hesaplandı
+- **Trailing 12-month (Slayt 69):** Yıllık dönem Excel'leri yüklendi. TTM = son 4 çeyreği toplayıp tek rakam elde etmek anlamına gelir — bu sistem çeyrek dönem export gerektirdiğinden yapılamıyor. Yıllık veri kullanılıyor.
+- **Beta:** Regression beta (bottom-up değil) — Slayt 47
+- **Satın alma normalizasyonu:** Tek dönem CapEx — Slayt 86
 
 *Kaynak: pages.stern.nyu.edu/~adamodar · dcfallOld.pdf · ctryprem.html*
 """)
@@ -713,8 +715,8 @@ Cisco örneğiyle doğrulandı: Research Asset = 3,035 ✓
 | NOL carryforward | İlk yıllarda vergi = 0 | Sabit %25 marjinal | 84 |
 | Model | Şirket büyüklüğüne göre 2 veya 3 stage | 2-stage tüm şirketler | 150 |
 | Nakit beta düzeltmesi | β_op = β × (1 + Nakit/FD) | Raporlanan beta | 153 |
-| Kira yükümlülüğü | Borç olarak ekle, FVÖK'ü düzelt | TFRS 16 zaten bilançoda | 72-74 |
-| Trailing 12-month | Son 4 çeyrek toplamı | Yıllık (Aralık) | 69 |
+| Kira yükümlülüğü | Borç olarak ekle, FVÖK'ü düzelt | TFRS 16 zaten Finansal Borçlar içinde — ayrıca girilmez | 72-74 |
+| Trailing 12-month | Son 4 çeyreği toplayıp tek kazanç | Yıllık dönem kullanılıyor (çeyreklik export gerekir) | 69 |
 """)
 
         st.divider()
