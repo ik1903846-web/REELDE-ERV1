@@ -84,6 +84,18 @@ def _sf(val) -> float:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def finansal_mi(row) -> bool:
+    """
+    Damodaran: Financial Service firms → DDM, not FCFF.
+    İki kontrol:
+      1. Sektör etiketinden doğrudan tespit
+      2. Finansal Borç / Aktif > %40 (oran bazlı)
+    """
+    # Sektör bazlı kontrol (birincil)
+    sektor = str(row.get("Hisse Sektör", "") or "")
+    if sektor in FINANSAL_SEKTORLER:
+        return True
+
+    # Oran bazlı kontrol (ikincil — sektör etiketi eksikse)
     aktif    = _sf(row.get("Aktifler"))
     fin_borc = _sf(row.get("Finansal Borçlar"))
     ozkaynak = max(_sf(row.get("Özkaynaklar")), 1.0)
